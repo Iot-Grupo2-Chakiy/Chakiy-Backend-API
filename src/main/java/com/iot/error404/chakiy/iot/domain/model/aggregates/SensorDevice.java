@@ -1,17 +1,21 @@
 package com.iot.error404.chakiy.iot.domain.model.aggregates;
 
+import com.iot.error404.chakiy.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.domain.AbstractAggregateRoot;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @Setter
 @Entity
-public class SensorDevice extends AbstractAggregateRoot<SensorDevice> {
+@EntityListeners(AuditingEntityListener.class)
+public class SensorDevice extends AuditableAbstractAggregateRoot<SensorDevice> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

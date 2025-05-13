@@ -1,27 +1,20 @@
 package com.iot.error404.chakiy.iot.domain.model.aggregates;
 
+import com.iot.error404.chakiy.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-@Getter
-@Setter
+@EntityListeners(AuditingEntityListener.class)
 @Entity
-public class IoTDevice {
+public class IoTDevice extends AuditableAbstractAggregateRoot<IoTDevice> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Unique identifier for the IoT device
+    private Long id;
 
-    @NotNull
-    private String name; // Name of the IoT device
-
-    @NotNull
-    private Long sensorId; // Identifier for the associated sensor
-
-    @NotNull
-    private Boolean estado; // State of the device: true (ON), false (OFF)
+    private String name;
+    private Long sensorId;
+    private Boolean estado;
 
     public IoTDevice(String name, Long sensorId, Boolean estado) {
         this.name = name;
@@ -30,5 +23,21 @@ public class IoTDevice {
     }
 
     public IoTDevice() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Long getSensorId() {
+        return sensorId;
+    }
+
+    public Boolean getEstado() {
+        return estado;
     }
 }
