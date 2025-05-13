@@ -1,4 +1,4 @@
-package com.iot.error404.chakiy.routines.domain.model.aggregates;
+package com.iot.error404.chakiy.auditTrail.domain.model.aggregates;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

@@ -1,4 +1,4 @@
-package com.iot.error404.chakiy.routines.domain.model.entities;
+package com.iot.error404.chakiy.notifications.domain.model.entities;
 
 import com.iot.error404.chakiy.iot.domain.model.aggregates.SensorDevice;
 import jakarta.persistence.*;
