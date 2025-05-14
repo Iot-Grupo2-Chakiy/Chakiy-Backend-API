@@ -20,7 +20,7 @@ public class IoTDeviceCommandServiceImpl implements IoTDeviceCommandService {
         this.iotDeviceRepository = iotDeviceRepository;
     }
 
-
+    @Override
     public void updateEstadoIoTDevice(UpdateIotEstadoByIdCommand command) {
         Optional<IoTDevice> optionalDevice = iotDeviceRepository.findById(command.id());
         if (optionalDevice.isPresent()) {
@@ -43,10 +43,21 @@ public class IoTDeviceCommandServiceImpl implements IoTDeviceCommandService {
     }
 
     private IoTDevice createAndSaveIoTDevice(CreateIoTDeviceCommand command) {
-        IoTDevice device = new IoTDevice(command.name(), command.sensorId(), command.estado());
+        IoTDevice device = new IoTDevice(
+                command.name(),
+                command.estado(),
+                command.intervaloActualizar(),
+                command.temperaturaMin(),
+                command.temperaturaMax(),
+                command.calidadDeAireMin(),
+                command.calidadDeAireMax(),
+                command.humedadMin(),
+                command.humedadMax()
+        );
         iotDeviceRepository.save(device);
         return device;
     }
+
     @Override
     public void createIoTDevice(CreateIoTDeviceCommand command) {
         createAndSaveIoTDevice(command);

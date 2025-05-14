@@ -8,8 +8,14 @@ public class IoTDeviceResourceFromEntityAssembler {
         return new IoTDeviceResource(
                 entity.getId(),
                 entity.getName(),
-                entity.getSensorId(),
-                entity.getEstado()
+                entity.getEstado(),
+                entity.getIntervaloActualizar(),
+                entity.getTemperaturaMin(),
+                entity.getTemperaturaMax(),
+                entity.getCalidadDeAireMin(),
+                entity.getCalidadDeAireMax(),
+                entity.getHumedadMin(),
+                entity.getHumedadMax()
         );
     }
 }
