@@ -40,4 +40,7 @@ public class IoTDevice extends AuditableAbstractAggregateRoot<IoTDevice> {
     public Boolean getEstado() {
         return estado;
     }
+    public void setEstado(Boolean estado) {
+        this.estado = estado;
+    }
 }
