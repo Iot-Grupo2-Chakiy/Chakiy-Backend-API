@@ -1,11 +1,10 @@
 package com.iot.error404.chakiy.iot.application.internal.commandservices;
 
 import com.iot.error404.chakiy.iot.domain.model.entities.TipoSensor;
-import com.iot.error404.chakiy.iot.domain.model.commands.CreateTipoSensorCommand;
 import com.iot.error404.chakiy.iot.infrastructure.persistence.jpa.repositories.TipoSensorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.iot.error404.chakiy.iot.domain.model.commands.CreateTipoSensorCommand;
 @Service
 public class TipoSensorCommandServiceImpl {
 

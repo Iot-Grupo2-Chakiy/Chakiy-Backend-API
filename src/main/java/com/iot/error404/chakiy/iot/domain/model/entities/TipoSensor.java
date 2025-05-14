@@ -1,6 +1,5 @@
 package com.iot.error404.chakiy.iot.domain.model.entities;
 
-import com.iot.error404.chakiy.iot.domain.model.aggregates.SensorDevice;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -20,8 +19,6 @@ public class TipoSensor {
     @NotNull
     private String name;
 
-    @OneToMany(mappedBy = "tipoSensorId", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SensorDevice> sensorDevices;
 
     public TipoSensor() {
     }
