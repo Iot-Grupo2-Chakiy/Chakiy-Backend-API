@@ -1,32 +1,68 @@
 package com.iot.error404.chakiy.routines.domain.model.aggregates;
 
+import com.iot.error404.chakiy.iot.domain.model.aggregates.IoTDevice;
+import com.iot.error404.chakiy.routines.domain.model.commands.CreateRoutineCommand;
+import com.iot.error404.chakiy.routines.domain.model.commands.UpdateRoutineCommand;
+import com.iot.error404.chakiy.routines.domain.model.valueobjects.WeekDay;
 import com.iot.error404.chakiy.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+
 @Getter
 @Setter
+@NoArgsConstructor
+@Entity
 public class Routine extends AuditableAbstractAggregateRoot <Routine>  {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String name;
 
-    private String nombre;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "device_id", nullable = false)
+    private IoTDevice device;
 
-    private String dispositivo;
+    @Column(name = "routine_condition")
+    private String condition;
 
-    private String condicion;
+    @ElementCollection(targetClass = WeekDay.class, fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    private List<WeekDay> days = new ArrayList<>();
 
-    public Long dias;
+    private LocalTime startTime;
 
-    private LocalTime horaInicio;
+    private LocalTime endTime;
 
-    private LocalTime horaFin;
+    private String ubication;
 
-    private String ubicacion;
+    public Routine(CreateRoutineCommand command, IoTDevice device) {
+        this.name = command.name();
+        this.device = device;
+        this.condition = command.condition();
+        this.days = command.days().stream()
+                .map(WeekDay::valueOf)
+                .toList();
+        this.startTime = command.startTime();
+        this.endTime = command.endTime();
+        this.ubication = command.ubication();
+    }
+
+    public void updateRoutine(UpdateRoutineCommand command, IoTDevice device) {
+        this.name = command.name();
+        this.device = device;
+        this.condition = command.condition();
+        this.days = command.days().stream()
+                .map(WeekDay::valueOf)
+                .toList();
+        this.startTime = command.startTime();
+        this.endTime = command.endTime();
+        this.ubication = command.ubication();
+    }
+
 }
