@@ -19,7 +19,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/routine")
+@RequestMapping(value = "/api/v1/routine")
 public class RoutineController {
     @Autowired private RoutineCommandService routineCommandService;
     @Autowired private RoutineQueryService routineQueryService;

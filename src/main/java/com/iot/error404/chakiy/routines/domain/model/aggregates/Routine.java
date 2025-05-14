@@ -6,20 +6,21 @@ import com.iot.error404.chakiy.routines.domain.model.commands.UpdateRoutineComma
 import com.iot.error404.chakiy.routines.domain.model.valueobjects.WeekDay;
 import com.iot.error404.chakiy.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+
 @Getter
 @Setter
 @NoArgsConstructor
+@Entity
 public class Routine extends AuditableAbstractAggregateRoot <Routine>  {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     private String name;
 
@@ -27,11 +28,12 @@ public class Routine extends AuditableAbstractAggregateRoot <Routine>  {
     @JoinColumn(name = "device_id", nullable = false)
     private IoTDevice device;
 
+    @Column(name = "routine_condition")
     private String condition;
 
     @ElementCollection(targetClass = WeekDay.class, fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    private List<WeekDay> days;
+    private List<WeekDay> days = new ArrayList<>();
 
     private LocalTime startTime;
 

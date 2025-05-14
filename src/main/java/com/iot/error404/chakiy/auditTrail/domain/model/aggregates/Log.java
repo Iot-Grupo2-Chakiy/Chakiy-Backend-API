@@ -14,11 +14,9 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 public class Log extends AuditableAbstractAggregateRoot <Log> {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private LocalDateTime timestamp;
+
+    @Column(name = "log_condition")
     private String condition;
 
     @Enumerated(EnumType.STRING)

@@ -1,5 +1,6 @@
 package com.iot.error404.chakiy.iot.interfaces.REST;
 
+import com.iot.error404.chakiy.iot.domain.model.aggregates.IoTDevice;
 import com.iot.error404.chakiy.iot.domain.model.commands.CreateIoTDeviceCommand;
 import com.iot.error404.chakiy.iot.domain.model.commands.UpdateIotEstadoByIdCommand;
 import com.iot.error404.chakiy.iot.domain.model.queries.GetAllIoTDevicesQuery;
@@ -7,7 +8,9 @@ import com.iot.error404.chakiy.iot.domain.model.queries.GetIoTDeviceByIdQuery;
 import com.iot.error404.chakiy.iot.domain.services.IoTDeviceCommandService;
 import com.iot.error404.chakiy.iot.domain.services.IoTDeviceQueryService;
 import com.iot.error404.chakiy.iot.interfaces.REST.resources.CreateIoTDeviceResource;
+import com.iot.error404.chakiy.iot.interfaces.REST.resources.IoTDeviceResource;
 import com.iot.error404.chakiy.iot.interfaces.REST.resources.UpdateIoTEstadoByIdResource;
+import com.iot.error404.chakiy.iot.interfaces.REST.transform.IoTDeviceResourceFromEntityAssembler;
 import com.iot.error404.chakiy.iot.interfaces.REST.transform.UpdateIoTDeviceCommandFromResourceAssembler;
 import com.iot.error404.chakiy.iot.interfaces.REST.transform.CreateIoTDeviceCommandFromResourceAssembler;
 import org.springframework.http.HttpStatus;
@@ -15,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/iot-devices")
@@ -43,9 +47,10 @@ public class IoTDeviceController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Object>> getAllIoTDevices() {
-        List<Object> devices = iotDeviceQueryService.handle(new GetAllIoTDevicesQuery());
-        return ResponseEntity.ok(devices);
+    public ResponseEntity<List<IoTDeviceResource>> getAllIoTDevices() {
+        List<IoTDevice> devices = iotDeviceQueryService.handle(new GetAllIoTDevicesQuery());
+        List<IoTDeviceResource> deviceResources = devices.stream().map(IoTDeviceResourceFromEntityAssembler::toResource).toList();
+        return ResponseEntity.ok(deviceResources);
     }
 
     @GetMapping("/{id}")
