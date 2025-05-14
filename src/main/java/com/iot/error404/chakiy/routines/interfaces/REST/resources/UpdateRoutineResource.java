@@ -3,8 +3,7 @@ package com.iot.error404.chakiy.routines.interfaces.REST.resources;
 import java.time.LocalTime;
 import java.util.List;
 
-public record RoutineResource(
-        Long id,
+public record UpdateRoutineResource(
         String name,
         Long deviceId,
         String condition,
