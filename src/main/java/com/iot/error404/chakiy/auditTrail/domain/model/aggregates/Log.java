@@ -14,6 +14,10 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 public class Log extends AuditableAbstractAggregateRoot <Log> {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private LocalDateTime timestamp;
 
     @Column(name = "log_condition")
@@ -35,5 +39,25 @@ public class Log extends AuditableAbstractAggregateRoot <Log> {
         this.condition = command.condition();
         this.logType = LogType.valueOf(command.logType());
         this.ioTDevice = device;
+    }
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public String getCondition() {
+        return condition;
+    }
+
+    public Long getId()
+    {
+        return id;
+    }
+
+    public LogType getLogType() {
+        return logType;
+    }
+
+    public IoTDevice getIoTDevice() {
+        return ioTDevice;
     }
 }

@@ -6,21 +6,17 @@ import com.iot.error404.chakiy.routines.domain.model.commands.UpdateRoutineComma
 import com.iot.error404.chakiy.routines.domain.model.valueobjects.WeekDay;
 import com.iot.error404.chakiy.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-
-@Getter
-@Setter
-@NoArgsConstructor
 @Entity
-public class Routine extends AuditableAbstractAggregateRoot <Routine>  {
+public class Routine extends AuditableAbstractAggregateRoot<Routine> {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private String name;
 
@@ -40,6 +36,8 @@ public class Routine extends AuditableAbstractAggregateRoot <Routine>  {
     private LocalTime endTime;
 
     private String ubication;
+
+    public Routine() {}
 
     public Routine(CreateRoutineCommand command, IoTDevice device) {
         this.name = command.name();
@@ -65,4 +63,35 @@ public class Routine extends AuditableAbstractAggregateRoot <Routine>  {
         this.ubication = command.ubication();
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public IoTDevice getDevice() {
+        return device;
+    }
+
+    public String getCondition() {
+        return condition;
+    }
+
+    public List<WeekDay> getDays() {
+        return days;
+    }
+
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
+    public String getUbication() {
+        return ubication;
+    }
 }
