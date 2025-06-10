@@ -15,20 +15,15 @@ public class IoTDevice extends AuditableAbstractAggregateRoot<IoTDevice> {
 
     private String name;
     private Boolean estado;
-    private Integer intervaloActualizar; // Update interval in seconds for the sensor data
+    private Integer intervaloActualizar;
+    private Double temperaturaMin;
 
-    private Double temperaturaMin; // Minimum temperature threshold
+    private Double temperaturaMax;
 
-    private Double temperaturaMax; // Maximum temperature threshold
-
-    private Double calidadDeAireMin; // Minimum air quality threshold
-
-    private Double calidadDeAireMax; // Maximum air quality threshold
-
-    private Double humedadMin; // Minimum humidity threshold
-
-    private Double humedadMax; // Maximum humidity threshold
-
+    private Double calidadDeAireMin;
+    private Double calidadDeAireMax;
+    private Double humedadMin;
+    private Double humedadMax;
     public IoTDevice(String name, Boolean estado, Integer intervaloActualizar,
                      Double temperaturaMin, Double temperaturaMax,
                      Double calidadDeAireMin, Double calidadDeAireMax,

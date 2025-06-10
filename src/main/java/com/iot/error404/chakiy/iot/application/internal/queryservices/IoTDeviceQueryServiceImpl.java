@@ -21,7 +21,6 @@ public class IoTDeviceQueryServiceImpl implements IoTDeviceQueryService {
 
     @Override
     public Object handle(GetIoTDeviceByIdQuery query) {
-        // Mock implementation - replace with actual logic
         return new Object();
     }
 }

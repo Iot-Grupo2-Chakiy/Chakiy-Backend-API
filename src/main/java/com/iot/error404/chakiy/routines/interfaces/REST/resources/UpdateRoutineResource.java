@@ -10,6 +10,7 @@ public record UpdateRoutineResource(
         List<String> days,
         LocalTime startTime,
         LocalTime endTime,
-        String ubication
+        String ubication,
+        boolean isDry
 ) {
 }
