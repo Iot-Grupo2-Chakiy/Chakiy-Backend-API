@@ -10,6 +10,7 @@ public record IoTDeviceResource(
         Double calidadDeAireMin,
         Double calidadDeAireMax,
         Double humedadMin,
-        Double humedadMax
+        Double humedadMax,
+        Boolean isMainDevice
 ) {
 }

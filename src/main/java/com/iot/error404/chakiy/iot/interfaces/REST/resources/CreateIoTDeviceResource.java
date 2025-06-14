@@ -9,6 +9,7 @@ public record CreateIoTDeviceResource(
         Double calidadDeAireMin,
         Double calidadDeAireMax,
         Double humedadMin,
-        Double humedadMax
+        Double humedadMax,
+        Boolean isMainDevice
 ) {
 }

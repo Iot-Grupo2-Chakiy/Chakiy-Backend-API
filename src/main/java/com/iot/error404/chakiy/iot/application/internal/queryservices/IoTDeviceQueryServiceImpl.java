@@ -23,4 +23,5 @@ public class IoTDeviceQueryServiceImpl implements IoTDeviceQueryService {
     public Object handle(GetIoTDeviceByIdQuery query) {
         return new Object();
     }
+
 }

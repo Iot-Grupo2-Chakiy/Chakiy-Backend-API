@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/log")
+@RequestMapping(value = "/api/v1/log")
 public class LogController {
     @Autowired private LogQueryService logQueryService;
 

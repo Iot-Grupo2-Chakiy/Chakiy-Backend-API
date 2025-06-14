@@ -15,7 +15,8 @@ public class IoTDeviceResourceFromEntityAssembler {
                 entity.getCalidadDeAireMin(),
                 entity.getCalidadDeAireMax(),
                 entity.getHumedadMin(),
-                entity.getHumedadMax()
+                entity.getHumedadMax(),
+                entity.getIsMainDevice()
         );
     }
 }
