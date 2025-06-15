@@ -11,6 +11,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 public class Routine extends AuditableAbstractAggregateRoot<Routine> {
@@ -47,7 +48,7 @@ public class Routine extends AuditableAbstractAggregateRoot<Routine> {
         this.condition = command.condition();
         this.days = command.days().stream()
                 .map(WeekDay::valueOf)
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
         this.startTime = command.startTime();
         this.endTime = command.endTime();
         this.ubication = command.ubication();
@@ -58,9 +59,10 @@ public class Routine extends AuditableAbstractAggregateRoot<Routine> {
         this.name = command.name();
         this.device = device;
         this.condition = command.condition();
-        this.days = command.days().stream()
+        this.days.clear();
+        this.days.addAll(command.days().stream()
                 .map(WeekDay::valueOf)
-                .toList();
+                .toList());
         this.startTime = command.startTime();
         this.endTime = command.endTime();
         this.ubication = command.ubication();

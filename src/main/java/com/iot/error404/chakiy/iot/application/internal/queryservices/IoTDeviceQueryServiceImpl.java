@@ -20,8 +20,9 @@ public class IoTDeviceQueryServiceImpl implements IoTDeviceQueryService {
     }
 
     @Override
-    public Object handle(GetIoTDeviceByIdQuery query) {
-        return new Object();
+    public IoTDevice handle(GetIoTDeviceByIdQuery query) {
+        return iotDeviceRepository.findById(query.id())
+                .orElseThrow(() -> new IllegalArgumentException("IoTDevice not found with id: " + query.id()));
     }
 
 }

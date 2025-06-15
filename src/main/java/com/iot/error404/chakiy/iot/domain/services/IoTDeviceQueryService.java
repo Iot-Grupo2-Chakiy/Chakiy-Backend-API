@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface IoTDeviceQueryService {
     List<IoTDevice> handle(GetAllIoTDevicesQuery query);
-    Object handle(GetIoTDeviceByIdQuery query);
+    IoTDevice handle(GetIoTDeviceByIdQuery query);
 }

@@ -48,17 +48,23 @@ public class IoTDeviceCommandServiceImpl implements IoTDeviceCommandService {
 
     @Override
     public Map<String, Boolean> updateIoTMainDeviceById(UpdateIoTMainDeviceByIdCommand command) {
-        boolean mainDeviceExists = iotDeviceRepository.findAll()
-                .stream()
-                .anyMatch(device -> device.getIsMainDevice() != null && device.getIsMainDevice());
-
-        if (mainDeviceExists) {
-            return Map.of("doesMainDeviceAlreadyExists", true);
-        }
-
         Optional<IoTDevice> optionalDevice = iotDeviceRepository.findById(command.id());
+
         if (optionalDevice.isPresent()) {
             IoTDevice device = optionalDevice.get();
+
+            boolean isTryingToSetAsMain = command.isMainDevice();
+
+            if (isTryingToSetAsMain) {
+                boolean anotherMainDeviceExists = iotDeviceRepository.findAll()
+                        .stream()
+                        .anyMatch(d -> d.getIsMainDevice() != null && d.getIsMainDevice() && !d.getId().equals(device.getId()));
+
+                if (anotherMainDeviceExists) {
+                    return Map.of("doesMainDeviceAlreadyExists", true);
+                }
+            }
+
             device.setMainDevice(command.isMainDevice());
             iotDeviceRepository.save(device);
             return Map.of("doesMainDeviceAlreadyExists", false);
@@ -66,6 +72,7 @@ public class IoTDeviceCommandServiceImpl implements IoTDeviceCommandService {
             throw new IllegalArgumentException("IoTDevice with id " + command.id() + " not found");
         }
     }
+
 
     @Override
     public boolean updateIoTDeviceById(UpdateIoTDeviceByIdCommand command) {

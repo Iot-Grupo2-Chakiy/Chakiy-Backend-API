@@ -57,9 +57,15 @@ public class IoTDeviceController {
         return ResponseEntity.ok(device);
     }
 
+
     @PatchMapping("/{id}/main-device")
-    public ResponseEntity<Map<String, Boolean>> updateIoTMainDeviceById(@PathVariable Long id, @RequestBody UpdateIoTMainDeviceByIdCommandResource resource) {
-        UpdateIoTMainDeviceByIdCommand command = UpdateIoTMainDeviceByIdCommandFromResourceAssembler.toCommand(id, resource);
+    public ResponseEntity<Map<String, Boolean>> updateIoTMainDeviceById(
+            @PathVariable Long id,
+            @RequestBody UpdateIoTMainDeviceByIdCommandResource resource) {
+
+        UpdateIoTMainDeviceByIdCommand command =
+                UpdateIoTMainDeviceByIdCommandFromResourceAssembler.toCommand(id, resource);
+
         Map<String, Boolean> response = iotDeviceService.updateIoTMainDeviceById(command);
 
         if (response.get("doesMainDeviceAlreadyExists")) {
@@ -68,6 +74,7 @@ public class IoTDeviceController {
 
         return ResponseEntity.ok(response);
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteIoTDeviceById(@PathVariable Long id) {
         iotDeviceService.deleteIoTDeviceById(id);
