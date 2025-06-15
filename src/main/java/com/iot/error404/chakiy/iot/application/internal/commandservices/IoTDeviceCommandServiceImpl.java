@@ -4,6 +4,7 @@ import com.iot.error404.chakiy.auditTrail.domain.model.commands.CreateLogCommand
 import com.iot.error404.chakiy.auditTrail.domain.services.LogCommandService;
 import com.iot.error404.chakiy.iot.domain.model.aggregates.IoTDevice;
 import com.iot.error404.chakiy.iot.domain.model.commands.CreateIoTDeviceCommand;
+import com.iot.error404.chakiy.iot.domain.model.commands.UpdateIoTDeviceByIdCommand;
 import com.iot.error404.chakiy.iot.domain.model.commands.UpdateIoTMainDeviceByIdCommand;
 import com.iot.error404.chakiy.iot.domain.model.commands.UpdateIotEstadoByIdCommand;
 import com.iot.error404.chakiy.iot.domain.services.IoTDeviceCommandService;
@@ -11,9 +12,8 @@ import com.iot.error404.chakiy.iot.infrastructure.persistence.jpa.repositories.I
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Optional;
-
-import static com.iot.error404.chakiy.auditTrail.domain.model.valueobjects.LogType.MANUAL;
 
 @Service
 public class IoTDeviceCommandServiceImpl implements IoTDeviceCommandService {
@@ -47,14 +47,48 @@ public class IoTDeviceCommandServiceImpl implements IoTDeviceCommandService {
     }
 
     @Override
-    public void updateIoTMainDeviceById(UpdateIoTMainDeviceByIdCommand command) {
+    public Map<String, Boolean> updateIoTMainDeviceById(UpdateIoTMainDeviceByIdCommand command) {
+        boolean mainDeviceExists = iotDeviceRepository.findAll()
+                .stream()
+                .anyMatch(device -> device.getIsMainDevice() != null && device.getIsMainDevice());
+
+        if (mainDeviceExists) {
+            return Map.of("doesMainDeviceAlreadyExists", true);
+        }
+
         Optional<IoTDevice> optionalDevice = iotDeviceRepository.findById(command.id());
         if (optionalDevice.isPresent()) {
             IoTDevice device = optionalDevice.get();
             device.setMainDevice(command.isMainDevice());
             iotDeviceRepository.save(device);
+            return Map.of("doesMainDeviceAlreadyExists", false);
         } else {
             throw new IllegalArgumentException("IoTDevice with id " + command.id() + " not found");
+        }
+    }
+
+    @Override
+    public boolean updateIoTDeviceById(UpdateIoTDeviceByIdCommand command) {
+        Optional<IoTDevice> optionalDevice = iotDeviceRepository.findById(command.id());
+        if (optionalDevice.isPresent()) {
+            IoTDevice device = optionalDevice.get();
+
+            device.setName(command.name());
+            device.setEstado(command.estado());
+            device.setIntervaloActualizar(command.intervaloActualizar());
+            device.setTemperaturaMin(command.temperaturaMin());
+            device.setTemperaturaMax(command.temperaturaMax());
+            device.setCalidadDeAireMin(command.calidadDeAireMin());
+            device.setCalidadDeAireMax(command.calidadDeAireMax());
+            device.setHumedadMin(command.humedadMin());
+            device.setHumedadMax(command.humedadMax());
+            device.setMainDevice(command.isMainDevice());
+
+            iotDeviceRepository.save(device);
+
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -83,6 +117,16 @@ public class IoTDeviceCommandServiceImpl implements IoTDeviceCommandService {
         );
         iotDeviceRepository.save(device);
         return device;
+    }
+
+    @Override
+    public void deleteIoTDeviceById(Long id) {
+        Optional<IoTDevice> optionalDevice = iotDeviceRepository.findById(id);
+        if (optionalDevice.isPresent()) {
+            iotDeviceRepository.delete(optionalDevice.get());
+        } else {
+            throw new IllegalArgumentException("IoTDevice with id " + id + " not found");
+        }
     }
 
     @Override

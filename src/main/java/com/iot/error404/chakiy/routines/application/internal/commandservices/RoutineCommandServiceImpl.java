@@ -43,8 +43,8 @@ public class RoutineCommandServiceImpl implements RoutineCommandService {
         routineRepository.deleteById(command.id());
     }
 
-    @Scheduled(fixedRate = 5000)
+    /*@Scheduled(fixedRate = 5000)
     public void ejecutarTareaPeriodica() {
         System.out.println("Ejecutando tarea en background: " + System.currentTimeMillis());
-    }
+    }*/
 }

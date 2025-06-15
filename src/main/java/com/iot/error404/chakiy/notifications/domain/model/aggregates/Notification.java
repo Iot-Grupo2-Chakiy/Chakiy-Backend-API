@@ -21,4 +21,8 @@ public class Notification extends AuditableAbstractAggregateRoot <Notification> 
     private ENotificationType type;
 
     private String jsonReglas;
+
+    public Notification() {
+
+    }
 }
