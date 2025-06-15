@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -100,5 +101,8 @@ public class Routine extends AuditableAbstractAggregateRoot<Routine> {
 
     public boolean getIsDry() {
         return isDry;
+    }
+    public Date getCreatedAt() {
+        return super.getCreatedAt();
     }
 }

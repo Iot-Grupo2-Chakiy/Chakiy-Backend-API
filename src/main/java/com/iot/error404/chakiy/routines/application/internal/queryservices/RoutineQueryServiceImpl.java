@@ -9,21 +9,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class RoutineQueryServiceImpl implements RoutineQueryService {
-    @Autowired private RoutineRepository routineRepository;
+    @Autowired
+    private RoutineRepository routineRepository;
 
     @Override
-    public List<Routine> handle(GetAllRoutinesQuery query) {
+    public List<Routine> find_by_id_routine(GetAllRoutinesQuery query) {
         return routineRepository.findAll();
     }
 
     @Override
-    public Routine handle(GetRoutineByIdQuery query) {
-        return routineRepository.findById(query.id()).orElseThrow(
-                () -> new IllegalArgumentException("Routine not found with id: " + query.id())
-        );
+    public Routine find_by_id_routine(GetRoutineByIdQuery query) {
+        return routineRepository.findByIdWithDevice(query.id())
+                .orElseThrow(() -> new RuntimeException("Routine not found with id: " + query.id()));
     }
 }

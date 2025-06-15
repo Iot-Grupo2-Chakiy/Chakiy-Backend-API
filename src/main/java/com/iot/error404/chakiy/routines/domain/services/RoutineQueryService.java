@@ -5,9 +5,8 @@ import com.iot.error404.chakiy.routines.domain.model.queries.GetAllRoutinesQuery
 import com.iot.error404.chakiy.routines.domain.model.queries.GetRoutineByIdQuery;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface RoutineQueryService {
-    List<Routine> handle(GetAllRoutinesQuery query);
-    Routine handle(GetRoutineByIdQuery query);
+    List<Routine> find_by_id_routine(GetAllRoutinesQuery query);
+    Routine find_by_id_routine(GetRoutineByIdQuery query);
 }
