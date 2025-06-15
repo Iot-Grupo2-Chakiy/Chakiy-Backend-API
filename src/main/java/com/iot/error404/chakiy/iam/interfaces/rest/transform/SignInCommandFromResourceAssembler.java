@@ -1,0 +1,11 @@
+package com.iot.error404.chakiy.iam.interfaces.rest.transform;
+
+import com.iot.error404.chakiy.iam.domain.model.commands.SignInCommand;
+import com.iot.error404.chakiy.iam.interfaces.rest.resources.SignInResource;
+
+public class SignInCommandFromResourceAssembler {
+
+  public static SignInCommand toCommandFromResource(SignInResource signInResource) {
+    return new SignInCommand(signInResource.email(), signInResource.password());
+  }
+}
