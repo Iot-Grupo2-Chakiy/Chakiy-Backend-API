@@ -15,24 +15,20 @@ public class IoTDevice extends AuditableAbstractAggregateRoot<IoTDevice> {
 
     private String name;
     private Boolean estado;
-    private Integer intervaloActualizar; // Update interval in seconds for the sensor data
+    private Integer intervaloActualizar;
+    private Double temperaturaMin;
 
-    private Double temperaturaMin; // Minimum temperature threshold
+    private Double temperaturaMax;
 
-    private Double temperaturaMax; // Maximum temperature threshold
-
-    private Double calidadDeAireMin; // Minimum air quality threshold
-
-    private Double calidadDeAireMax; // Maximum air quality threshold
-
-    private Double humedadMin; // Minimum humidity threshold
-
-    private Double humedadMax; // Maximum humidity threshold
-
+    private Double calidadDeAireMin;
+    private Double calidadDeAireMax;
+    private Double humedadMin;
+    private Double humedadMax;
+    public Boolean isMainDevice;
     public IoTDevice(String name, Boolean estado, Integer intervaloActualizar,
                      Double temperaturaMin, Double temperaturaMax,
                      Double calidadDeAireMin, Double calidadDeAireMax,
-                     Double humedadMin, Double humedadMax) {
+                     Double humedadMin, Double humedadMax, Boolean isMainDevice) {
         this.name = name;
         this.estado = estado;
         this.intervaloActualizar = intervaloActualizar;
@@ -42,6 +38,7 @@ public class IoTDevice extends AuditableAbstractAggregateRoot<IoTDevice> {
         this.calidadDeAireMax = calidadDeAireMax;
         this.humedadMin = humedadMin;
         this.humedadMax = humedadMax;
+        this.isMainDevice = isMainDevice;
     }
 
     public IoTDevice() {
@@ -89,5 +86,11 @@ public class IoTDevice extends AuditableAbstractAggregateRoot<IoTDevice> {
 
     public void setEstado(Boolean estado) {
         this.estado = estado;
+    }
+    public Boolean getIsMainDevice() {
+        return isMainDevice;
+    }
+    public void setMainDevice(Boolean isMainDevice) {
+        this.isMainDevice = isMainDevice;
     }
 }

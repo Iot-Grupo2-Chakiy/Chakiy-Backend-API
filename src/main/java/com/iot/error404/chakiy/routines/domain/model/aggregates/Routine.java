@@ -36,6 +36,7 @@ public class Routine extends AuditableAbstractAggregateRoot<Routine> {
     private LocalTime endTime;
 
     private String ubication;
+    private boolean isDry;
 
     public Routine() {}
 
@@ -49,6 +50,7 @@ public class Routine extends AuditableAbstractAggregateRoot<Routine> {
         this.startTime = command.startTime();
         this.endTime = command.endTime();
         this.ubication = command.ubication();
+        this.isDry = command.isDry();
     }
 
     public void updateRoutine(UpdateRoutineCommand command, IoTDevice device) {
@@ -61,6 +63,7 @@ public class Routine extends AuditableAbstractAggregateRoot<Routine> {
         this.startTime = command.startTime();
         this.endTime = command.endTime();
         this.ubication = command.ubication();
+        this.isDry = command.isDry();
     }
 
     public Long getId() {
@@ -93,5 +96,9 @@ public class Routine extends AuditableAbstractAggregateRoot<Routine> {
 
     public String getUbication() {
         return ubication;
+    }
+
+    public boolean getIsDry() {
+        return isDry;
     }
 }

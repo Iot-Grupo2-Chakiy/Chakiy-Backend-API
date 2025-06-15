@@ -12,7 +12,8 @@ public class CreateRoutineCommandFromResourceAssembler {
                 resource.days(),
                 resource.startTime(),
                 resource.endTime(),
-                resource.ubication()
+                resource.ubication(),
+                resource.isDry()
         );
     }
 }

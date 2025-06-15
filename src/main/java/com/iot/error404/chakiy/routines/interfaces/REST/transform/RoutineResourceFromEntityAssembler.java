@@ -14,7 +14,8 @@ public class RoutineResourceFromEntityAssembler {
                 entity.getDays().stream().map(Enum::name).toList(),
                 entity.getStartTime(),
                 entity.getEndTime(),
-                entity.getUbication()
+                entity.getUbication(),
+                entity.getIsDry()
                 );
     }
 }

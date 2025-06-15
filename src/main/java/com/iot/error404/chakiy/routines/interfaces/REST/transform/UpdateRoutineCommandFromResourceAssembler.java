@@ -13,7 +13,8 @@ public class UpdateRoutineCommandFromResourceAssembler {
                 resource.days(),
                 resource.startTime(),
                 resource.endTime(),
-                resource.ubication()
+                resource.ubication(),
+                resource.isDry()
         );
     }
 }

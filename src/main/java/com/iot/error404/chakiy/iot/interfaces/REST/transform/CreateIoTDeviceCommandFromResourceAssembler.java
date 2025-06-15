@@ -14,7 +14,8 @@ public class CreateIoTDeviceCommandFromResourceAssembler {
                 resource.calidadDeAireMin(),
                 resource.calidadDeAireMax(),
                 resource.humedadMin(),
-                resource.humedadMax()
+                resource.humedadMax(),
+                resource.isMainDevice()
         );
     }
 }
