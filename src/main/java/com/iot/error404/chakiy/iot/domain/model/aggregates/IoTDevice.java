@@ -1,9 +1,14 @@
 package com.iot.error404.chakiy.iot.domain.model.aggregates;
 
+import com.iot.error404.chakiy.auditTrail.domain.model.aggregates.Log;
+import com.iot.error404.chakiy.routines.domain.model.aggregates.Routine;
 import com.iot.error404.chakiy.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
@@ -19,6 +24,8 @@ public class IoTDevice extends AuditableAbstractAggregateRoot<IoTDevice> {
     private Double temperaturaMin;
 
     private Double temperaturaMax;
+    @OneToMany(mappedBy = "device", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Routine> routines = new ArrayList<>();
 
     private Double calidadDeAireMin;
     private Double calidadDeAireMax;
@@ -92,5 +99,40 @@ public class IoTDevice extends AuditableAbstractAggregateRoot<IoTDevice> {
     }
     public void setMainDevice(Boolean isMainDevice) {
         this.isMainDevice = isMainDevice;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setIntervaloActualizar(Integer intervaloActualizar) {
+        this.intervaloActualizar = intervaloActualizar;
+    }
+
+    public void setTemperaturaMin(Double temperaturaMin) {
+        this.temperaturaMin = temperaturaMin;
+    }
+
+    public void setTemperaturaMax(Double temperaturaMax) {
+        this.temperaturaMax = temperaturaMax;
+    }
+
+    public void setCalidadDeAireMin(Double calidadDeAireMin) {
+        this.calidadDeAireMin = calidadDeAireMin;
+    }
+
+    public void setCalidadDeAireMax(Double calidadDeAireMax) {
+        this.calidadDeAireMax = calidadDeAireMax;
+    }
+
+    public void setHumedadMin(Double humedadMin) {
+        this.humedadMin = humedadMin;
+    }
+
+    public void setHumedadMax(Double humedadMax) {
+        this.humedadMax = humedadMax;
     }
 }

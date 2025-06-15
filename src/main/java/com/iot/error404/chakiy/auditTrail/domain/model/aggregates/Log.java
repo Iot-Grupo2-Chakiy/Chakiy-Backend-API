@@ -27,7 +27,7 @@ public class Log extends AuditableAbstractAggregateRoot <Log> {
     private LogType logType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "device_id", nullable = false)
+    @JoinColumn(name = "device_id", nullable = true)
     private IoTDevice ioTDevice;
 
     public Log() {

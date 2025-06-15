@@ -2,6 +2,7 @@ package com.iot.error404.chakiy.iot.interfaces.REST;
 
 import com.iot.error404.chakiy.iot.domain.model.aggregates.IoTDevice;
 import com.iot.error404.chakiy.iot.domain.model.commands.CreateIoTDeviceCommand;
+import com.iot.error404.chakiy.iot.domain.model.commands.UpdateIoTDeviceByIdCommand;
 import com.iot.error404.chakiy.iot.domain.model.commands.UpdateIoTMainDeviceByIdCommand;
 import com.iot.error404.chakiy.iot.domain.model.commands.UpdateIotEstadoByIdCommand;
 import com.iot.error404.chakiy.iot.domain.model.queries.GetAllIoTDevicesQuery;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/iot-devices")
@@ -37,7 +39,7 @@ public class IoTDeviceController {
 
     @PatchMapping("/{id}/estado")
     public ResponseEntity<Void> updateIoTDeviceEstado(@PathVariable Long id, @RequestBody UpdateIoTEstadoByIdResource resource) {
-        UpdateIotEstadoByIdCommand command = UpdateIoTDeviceCommandFromResourceAssembler.toCommand(id, resource);
+        UpdateIotEstadoByIdCommand command = UpdateIoTDeviceEstadoCommandFromResourceAssembler.toCommand(id, resource);
         iotDeviceService.updateEstadoIoTDevice(command);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -56,9 +58,31 @@ public class IoTDeviceController {
     }
 
     @PatchMapping("/{id}/main-device")
-    public ResponseEntity<Void> updateIoTMainDeviceById(@PathVariable Long id, @RequestBody UpdateIoTMainDeviceByIdCommandResource resource) {
+    public ResponseEntity<Map<String, Boolean>> updateIoTMainDeviceById(@PathVariable Long id, @RequestBody UpdateIoTMainDeviceByIdCommandResource resource) {
         UpdateIoTMainDeviceByIdCommand command = UpdateIoTMainDeviceByIdCommandFromResourceAssembler.toCommand(id, resource);
-        iotDeviceService.updateIoTMainDeviceById(command);
+        Map<String, Boolean> response = iotDeviceService.updateIoTMainDeviceById(command);
+
+        if (response.get("doesMainDeviceAlreadyExists")) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        }
+
+        return ResponseEntity.ok(response);
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteIoTDeviceById(@PathVariable Long id) {
+        iotDeviceService.deleteIoTDeviceById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateIoTDeviceById(@PathVariable Long id, @RequestBody UpdateIoTDeviceByIdResource resource) {
+        UpdateIoTDeviceByIdCommand command = UpdateIoTDeviceByIdCommandFromResourceAssembler.toCommand(id, resource);
+        boolean updated = iotDeviceService.updateIoTDeviceById(command);
+
+        if (updated) {
+            return ResponseEntity.ok("El dispositivo IoT fue actualizado correctamente.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El dispositivo IoT no fue encontrado o no pudo ser actualizado.");
+        }
     }
 }
