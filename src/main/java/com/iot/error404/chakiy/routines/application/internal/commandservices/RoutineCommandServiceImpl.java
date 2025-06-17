@@ -2,6 +2,7 @@ package com.iot.error404.chakiy.routines.application.internal.commandservices;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.iot.error404.chakiy.iot.domain.model.aggregates.IoTDevice;
 import com.iot.error404.chakiy.iot.infrastructure.persistence.jpa.repositories.IoTDeviceRepository;
 import com.iot.error404.chakiy.routines.domain.model.aggregates.Routine;
 import com.iot.error404.chakiy.routines.domain.model.commands.*;
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @Service
 public class RoutineCommandServiceImpl implements RoutineCommandService {
-    private static final String ENDPOINT_URL = "http://127.0.0.1:5000/api/v1/routine-monitoring/data-records";
+    private static final String EDGE_API_URL = "http://127.0.0.1:5000/api/v1/routine-monitoring/data-records";
     private static final String API_KEY = "apichakiykey";
 
     @Autowired private RoutineRepository routineRepository;
@@ -42,7 +42,10 @@ public class RoutineCommandServiceImpl implements RoutineCommandService {
 
     private void registerRoutineInExternalAPI(Routine routine) {
         RoutineDTO routineDTO = new RoutineDTO(routine);
-        String deviceId = "dehumidifier_chakiy_001";
+
+        IoTDevice device = ioTDeviceRepository.findById(routine.getDevice().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Device not found with id: " + routine.getDevice().getId()));
+
         String routineData;
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -55,7 +58,7 @@ public class RoutineCommandServiceImpl implements RoutineCommandService {
         var requestBody = new RoutineRequest(
                 routineData,
                 routine.getCreatedAt().toString(),
-                deviceId
+                device.getName()
         );
 
         HttpHeaders headers = new HttpHeaders();
@@ -64,7 +67,7 @@ public class RoutineCommandServiceImpl implements RoutineCommandService {
         HttpEntity<RoutineRequest> request = new HttpEntity<>(requestBody, headers);
 
         try {
-            ResponseEntity<String> response = restTemplate.postForEntity(ENDPOINT_URL, request, String.class);
+            ResponseEntity<String> response = restTemplate.postForEntity(EDGE_API_URL, request, String.class);
             System.out.println("Routine registered in external API: " + response.getBody());
         } catch (Exception e) {
             System.err.println("Error registering routine in external API: " + e.getMessage());
