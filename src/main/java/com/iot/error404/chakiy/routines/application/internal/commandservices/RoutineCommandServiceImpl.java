@@ -57,7 +57,7 @@ public class RoutineCommandServiceImpl implements RoutineCommandService {
 
         var requestBody = new RoutineRequest(
                 routineData,
-                routine.getCreatedAt().toString(),
+                java.time.Instant.now().toString(),
                 device.getName()
         );
 
