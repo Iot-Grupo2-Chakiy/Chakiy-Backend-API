@@ -10,16 +10,26 @@ import com.iot.error404.chakiy.iot.domain.model.commands.UpdateIotEstadoByIdComm
 import com.iot.error404.chakiy.iot.domain.services.IoTDeviceCommandService;
 import com.iot.error404.chakiy.iot.infrastructure.persistence.jpa.repositories.IoTDeviceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
 public class IoTDeviceCommandServiceImpl implements IoTDeviceCommandService {
 
+    private static final String EDGE_API_URL = "http://127.0.0.1:5000/api/v1/health-monitoring/data-records";
+    private static final String API_KEY = "apichakiykey";
+
     private final IoTDeviceRepository iotDeviceRepository;
     private final LogCommandService logCommandService;
+    private final RestTemplate restTemplate = new RestTemplate();
+
 
     @Autowired
     public IoTDeviceCommandServiceImpl(IoTDeviceRepository iotDeviceRepository, LogCommandService logCommandService) {
@@ -48,17 +58,23 @@ public class IoTDeviceCommandServiceImpl implements IoTDeviceCommandService {
 
     @Override
     public Map<String, Boolean> updateIoTMainDeviceById(UpdateIoTMainDeviceByIdCommand command) {
-        boolean mainDeviceExists = iotDeviceRepository.findAll()
-                .stream()
-                .anyMatch(device -> device.getIsMainDevice() != null && device.getIsMainDevice());
-
-        if (mainDeviceExists) {
-            return Map.of("doesMainDeviceAlreadyExists", true);
-        }
-
         Optional<IoTDevice> optionalDevice = iotDeviceRepository.findById(command.id());
+
         if (optionalDevice.isPresent()) {
             IoTDevice device = optionalDevice.get();
+
+            boolean isTryingToSetAsMain = command.isMainDevice();
+
+            if (isTryingToSetAsMain) {
+                boolean anotherMainDeviceExists = iotDeviceRepository.findAll()
+                        .stream()
+                        .anyMatch(d -> d.getIsMainDevice() != null && d.getIsMainDevice() && !d.getId().equals(device.getId()));
+
+                if (anotherMainDeviceExists) {
+                    return Map.of("doesMainDeviceAlreadyExists", true);
+                }
+            }
+
             device.setMainDevice(command.isMainDevice());
             iotDeviceRepository.save(device);
             return Map.of("doesMainDeviceAlreadyExists", false);
@@ -66,6 +82,7 @@ public class IoTDeviceCommandServiceImpl implements IoTDeviceCommandService {
             throw new IllegalArgumentException("IoTDevice with id " + command.id() + " not found");
         }
     }
+
 
     @Override
     public boolean updateIoTDeviceById(UpdateIoTDeviceByIdCommand command) {
@@ -94,12 +111,36 @@ public class IoTDeviceCommandServiceImpl implements IoTDeviceCommandService {
 
     @Override
     public Long handle(CreateIoTDeviceCommand command) {
-        return createAndSaveIoTDevice(command).getId();
+        IoTDevice device = createAndSaveIoTDevice(command);
+        return device.getId();
     }
 
-    @Override
-    public void save(IoTDevice device) {
-        iotDeviceRepository.save(device);
+    private void sendIoTDeviceInfoToExternalAPI(IoTDevice device) {
+        Map<String, Object> payload = Map.of(
+                "device_id", device.getName(),
+                "humidifier_info", Map.of(
+                        "estado", device.getEstado(),
+                        "temperaturaMin", device.getTemperaturaMin(),
+                        "temperaturaMax", device.getTemperaturaMax(),
+                        "calidadDeAireMin", device.getCalidadDeAireMin(),
+                        "calidadDeAireMax", device.getCalidadDeAireMax(),
+                        "humedadMin", device.getHumedadMin(),
+                        "humedadMax", device.getHumedadMax()
+                ),
+                "created_at", java.time.Instant.now().toString()
+        );
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-API-Key", API_KEY);
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(payload, headers);
+
+        try {
+            ResponseEntity<Void> response = restTemplate.postForEntity(EDGE_API_URL, request, Void.class);
+            System.out.println("IoTDevice info sent successfully for device: " + device.getName());
+        } catch (Exception e) {
+            System.err.println("Error sending IoTDevice info to external API: " + e.getMessage());
+        }
     }
 
     private IoTDevice createAndSaveIoTDevice(CreateIoTDeviceCommand command) {
@@ -116,7 +157,18 @@ public class IoTDeviceCommandServiceImpl implements IoTDeviceCommandService {
                 command.isMainDevice()
         );
         iotDeviceRepository.save(device);
+        sendIoTDeviceInfoToExternalAPI(device);
         return device;
+    }
+
+    @Override
+    public void save(IoTDevice device) {
+        iotDeviceRepository.save(device);
+    }
+
+    @Override
+    public void createIoTDevice(CreateIoTDeviceCommand command) {
+        createAndSaveIoTDevice(command);
     }
 
     @Override
@@ -129,8 +181,5 @@ public class IoTDeviceCommandServiceImpl implements IoTDeviceCommandService {
         }
     }
 
-    @Override
-    public void createIoTDevice(CreateIoTDeviceCommand command) {
-        createAndSaveIoTDevice(command);
-    }
+
 }

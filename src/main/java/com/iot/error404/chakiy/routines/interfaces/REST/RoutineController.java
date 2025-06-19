@@ -27,7 +27,7 @@ public class RoutineController {
     @GetMapping
     public ResponseEntity<List<RoutineResource>> getAllRoutines(){
         var query = new GetAllRoutinesQuery();
-        var routineResources = routineQueryService.handle(query).stream()
+        var routineResources = routineQueryService.find_by_id_routine(query).stream()
                 .map(RoutineResourceFromEntityAssembler::toResourceFromEntity)
                 .toList();
         return ResponseEntity.ok(routineResources);
@@ -36,7 +36,7 @@ public class RoutineController {
     @GetMapping("/{id}")
     public ResponseEntity<RoutineResource> getRoutineById(@PathVariable Long id) {
         var query = new GetRoutineByIdQuery(id);
-        var routine = routineQueryService.handle(query);
+        var routine = routineQueryService.find_by_id_routine(query);
         var routineResource = RoutineResourceFromEntityAssembler.toResourceFromEntity(routine);
         return ResponseEntity.ok(routineResource);
     }

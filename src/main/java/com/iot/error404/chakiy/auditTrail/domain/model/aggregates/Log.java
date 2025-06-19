@@ -31,7 +31,7 @@ public class Log extends AuditableAbstractAggregateRoot <Log> {
     private IoTDevice ioTDevice;
 
     public Log() {
-        this.timestamp = LocalDateTime.now(); // Automatically set the timestamp
+        this.timestamp = LocalDateTime.now();
     }
 
     public Log(CreateLogCommand command, IoTDevice device) {
