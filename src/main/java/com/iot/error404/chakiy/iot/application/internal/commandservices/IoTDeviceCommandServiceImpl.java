@@ -23,7 +23,7 @@ import java.util.Optional;
 @Service
 public class IoTDeviceCommandServiceImpl implements IoTDeviceCommandService {
 
-    private static final String EDGE_API_URL = "http://127.0.0.1:5000/api/v1/health-monitoring/data-records";
+    private static final String EDGE_API_URL = "http://127.0.0.1:5000/api/v1/health-dehumidifier";
     private static final String API_KEY = "apichakiykey";
 
     private final IoTDeviceRepository iotDeviceRepository;
@@ -117,7 +117,7 @@ public class IoTDeviceCommandServiceImpl implements IoTDeviceCommandService {
 
     private void sendIoTDeviceInfoToExternalAPI(IoTDevice device) {
         Map<String, Object> payload = Map.of(
-                "device_id", device.getName(),
+                "device_id", device.getName(), // Corrected field name from "device_id" to "device_name"
                 "humidifier_info", Map.of(
                         "estado", device.getEstado(),
                         "temperaturaMin", device.getTemperaturaMin(),
@@ -125,7 +125,8 @@ public class IoTDeviceCommandServiceImpl implements IoTDeviceCommandService {
                         "calidadDeAireMin", device.getCalidadDeAireMin(),
                         "calidadDeAireMax", device.getCalidadDeAireMax(),
                         "humedadMin", device.getHumedadMin(),
-                        "humedadMax", device.getHumedadMax()
+                        "humedadMax", device.getHumedadMax(),
+                            "mainDevice", device.getIsMainDevice()
                 ),
                 "created_at", java.time.Instant.now().toString()
         );
@@ -136,7 +137,9 @@ public class IoTDeviceCommandServiceImpl implements IoTDeviceCommandService {
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(payload, headers);
 
         try {
-            ResponseEntity<Void> response = restTemplate.postForEntity(EDGE_API_URL, request, Void.class);
+            String url = EDGE_API_URL + "/create-dehumidifier";
+            System.out.println("Sending payload: " + payload);
+            ResponseEntity<Void> response = restTemplate.postForEntity(url, request, Void.class);
             System.out.println("IoTDevice info sent successfully for device: " + device.getName());
         } catch (Exception e) {
             System.err.println("Error sending IoTDevice info to external API: " + e.getMessage());
@@ -144,6 +147,11 @@ public class IoTDeviceCommandServiceImpl implements IoTDeviceCommandService {
     }
 
     private IoTDevice createAndSaveIoTDevice(CreateIoTDeviceCommand command) {
+        boolean deviceExists = iotDeviceRepository.existsByName(command.name());
+        if (deviceExists) {
+            throw new IllegalArgumentException("IoTDevice with name '" + command.name() + "' already exists");
+        }
+
         IoTDevice device = new IoTDevice(
                 command.name(),
                 command.estado(),
