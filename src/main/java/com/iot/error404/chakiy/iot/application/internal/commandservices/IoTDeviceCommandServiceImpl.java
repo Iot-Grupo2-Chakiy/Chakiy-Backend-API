@@ -12,6 +12,7 @@ import com.iot.error404.chakiy.iot.infrastructure.persistence.jpa.repositories.I
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -37,6 +38,41 @@ public class IoTDeviceCommandServiceImpl implements IoTDeviceCommandService {
         this.logCommandService = logCommandService;
     }
 
+
+    private void updateEstadoInExternalAPI(Long deviceId, Boolean estado) {
+        Optional<IoTDevice> optionalDevice = iotDeviceRepository.findById(deviceId);
+        if (!optionalDevice.isPresent()) {
+            throw new IllegalArgumentException("IoTDevice with id " + deviceId + " not found");
+        }
+
+        IoTDevice device = optionalDevice.get();
+
+        Map<String, Object> payload = Map.of(
+                "device_id", device.getName(), // Usar el nombre como device_id
+                "estado", estado
+        );
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+        headers.set("X-API-Key", API_KEY);
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(payload, headers);
+
+        try {
+            String url = EDGE_API_URL + "/update-estado";
+            System.out.println("Sending update estado payload: " + payload);
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.PUT,
+                    request,
+                    String.class
+            );
+            System.out.println("Estado updated successfully in Edge API for device: " + device.getName());
+            System.out.println("Response: " + response.getBody());
+        } catch (Exception e) {
+            System.err.println("Error updating estado in Edge API: " + e.getMessage());
+        }
+    }
     @Override
     public void updateEstadoIoTDevice(UpdateIotEstadoByIdCommand command) {
         Optional<IoTDevice> optionalDevice = iotDeviceRepository.findById(command.id());
@@ -44,6 +80,13 @@ public class IoTDeviceCommandServiceImpl implements IoTDeviceCommandService {
             IoTDevice device = optionalDevice.get();
             device.setEstado(command.estado());
             iotDeviceRepository.save(device);
+
+            // Actualizar estado en Edge API
+            try {
+                updateEstadoInExternalAPI(command.id(), command.estado());
+            } catch (Exception e) {
+                System.err.println("Failed to update estado in Edge API: " + e.getMessage());
+            }
 
             CreateLogCommand logCommand = new CreateLogCommand(
                     "Estado updated to: " + command.estado(),
