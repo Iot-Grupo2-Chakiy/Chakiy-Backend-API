@@ -12,6 +12,7 @@ import com.iot.error404.chakiy.routines.infrastructure.persistence.jpa.repositor
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -110,9 +111,39 @@ public class RoutineCommandServiceImpl implements RoutineCommandService {
 
     @Override
     public void handle(DeleteRoutineCommand command) {
-        if (!routineRepository.existsById(command.id())) {
-            throw new IllegalArgumentException("Routine not found with id: " + command.id());
-        }
+        Routine routine = routineRepository.findById(command.id())
+                .orElseThrow(() -> new IllegalArgumentException("Routine not found with id: " + command.id()));
+
+        IoTDevice device = routine.getDevice();
+        System.out.println("Device name associated with the routine: " + device.getName());
+        System.out.println("Routine ID to delete: " + routine.getId());
+
+        deleteRoutineFromExternalAPI(routine.getId(), device.getName());
+
         routineRepository.deleteById(command.id());
+    }
+
+    private void deleteRoutineFromExternalAPI(Long routineId, String deviceName) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-API-Key", API_KEY);
+
+        HttpEntity<Void> request = new HttpEntity<>(headers);
+
+        try {
+            String deleteUrl = "http://127.0.0.1:5000/api/v1/routine-monitoring/data-records/device/" + deviceName + "/routine/" + routineId;
+            System.out.println("Deleting routine from Edge API: " + deleteUrl);
+
+            ResponseEntity<String> response = restTemplate.exchange(
+                    deleteUrl,
+                    HttpMethod.DELETE,
+                    request,
+                    String.class
+            );
+
+            System.out.println("Routine deleted successfully from Edge API with device_id: " + deviceName + " and routine_id: " + routineId);
+            System.out.println("Response: " + response.getBody());
+        } catch (Exception e) {
+            System.err.println("Error deleting routine from Edge API: " + e.getMessage());
+        }
     }
 }

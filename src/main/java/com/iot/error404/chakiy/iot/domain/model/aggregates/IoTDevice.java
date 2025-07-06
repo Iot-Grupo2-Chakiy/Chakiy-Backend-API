@@ -26,7 +26,8 @@ public class IoTDevice extends AuditableAbstractAggregateRoot<IoTDevice> {
     private Double temperaturaMax;
     @OneToMany(mappedBy = "device", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Routine> routines = new ArrayList<>();
-
+    @OneToMany(mappedBy = "ioTDevice", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Log> logs = new ArrayList<>();
     private Double calidadDeAireMin;
     private Double calidadDeAireMax;
     private Double humedadMin;

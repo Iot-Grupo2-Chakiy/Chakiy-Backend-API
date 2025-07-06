@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-public class Log extends AuditableAbstractAggregateRoot <Log> {
+public class Log extends AuditableAbstractAggregateRoot<Log> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,7 +27,7 @@ public class Log extends AuditableAbstractAggregateRoot <Log> {
     private LogType logType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "device_id", nullable = true)
+    @JoinColumn(name = "device_id", nullable = false)
     private IoTDevice ioTDevice;
 
     public Log() {
@@ -40,6 +40,7 @@ public class Log extends AuditableAbstractAggregateRoot <Log> {
         this.logType = LogType.valueOf(command.logType());
         this.ioTDevice = device;
     }
+
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
@@ -48,8 +49,7 @@ public class Log extends AuditableAbstractAggregateRoot <Log> {
         return condition;
     }
 
-    public Long getId()
-    {
+    public Long getId() {
         return id;
     }
 
