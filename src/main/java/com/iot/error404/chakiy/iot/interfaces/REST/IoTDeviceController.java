@@ -31,10 +31,15 @@ public class IoTDeviceController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createIoTDevice(@RequestBody CreateIoTDeviceResource resource) {
+    public ResponseEntity<?> createIoTDevice(@RequestBody CreateIoTDeviceResource resource) {
+    try {
         CreateIoTDeviceCommand command = CreateIoTDeviceCommandFromResourceAssembler.toCommand(resource);
         iotDeviceService.createIoTDevice(command);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("message", "Error al crear dispositivo IoT", "error", e.getMessage()));
+    }
     }
 
     @PatchMapping("/{id}/estado")
