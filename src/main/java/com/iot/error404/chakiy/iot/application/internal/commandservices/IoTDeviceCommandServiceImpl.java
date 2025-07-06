@@ -168,8 +168,7 @@ public class IoTDeviceCommandServiceImpl implements IoTDeviceCommandService {
                         "calidadDeAireMin", device.getCalidadDeAireMin(),
                         "calidadDeAireMax", device.getCalidadDeAireMax(),
                         "humedadMin", device.getHumedadMin(),
-                        "humedadMax", device.getHumedadMax(),
-                            "mainDevice", device.getIsMainDevice()
+                        "humedadMax", device.getHumedadMax()
                 ),
                 "created_at", java.time.Instant.now().toString()
         );
