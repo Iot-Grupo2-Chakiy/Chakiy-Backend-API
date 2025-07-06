@@ -24,7 +24,7 @@ import java.util.Optional;
 @Service
 public class IoTDeviceCommandServiceImpl implements IoTDeviceCommandService {
 
-    private static final String EDGE_API_URL = "http://127.0.0.1:5000/api/v1/health-dehumidifier";
+    private static final String EDGE_API_URL = "https://563d-2001-1388-1641-b3ab-acbe-c469-5333-3788.ngrok-free.app/api/v1/health-dehumidifier";
     private static final String API_KEY = "apichakiykey";
 
     private final IoTDeviceRepository iotDeviceRepository;
