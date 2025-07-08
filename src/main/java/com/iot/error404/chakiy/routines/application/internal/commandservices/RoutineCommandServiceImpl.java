@@ -21,7 +21,7 @@ import java.util.Optional;
 
 @Service
 public class RoutineCommandServiceImpl implements RoutineCommandService {
-    private static final String EDGE_API_URL = "http://127.0.0.1:5000/api/v1/routine-monitoring/data-records";
+    private static final String EDGE_API_URL = "https://cb42b2bc7d28.ngrok-free.app/api/v1/routine-monitoring/data-records";
     private static final String API_KEY = "apichakiykey";
 
     @Autowired private RoutineRepository routineRepository;
